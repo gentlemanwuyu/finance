@@ -1,32 +1,21 @@
 <template>  
   <v-app-bar app dense dark color="#1867c0">
-    <v-app-bar-nav-icon></v-app-bar-nav-icon>
-    <v-toolbar-title>在路上</v-toolbar-title>
-    <v-spacer></v-spacer>
-      <v-menu
-        left
-        bottom
-      >
+    <v-menu bottom left>
         <template v-slot:activator="{ on, attrs }">
-          <v-btn
-            icon
-            v-bind="attrs"
-            v-on="on"
-          >
-            <v-icon>mdi-dots-vertical</v-icon>
+          <v-btn icon v-bind="attrs" v-on="on">
+            <v-icon>mdi-menu</v-icon>
           </v-btn>
         </template>
-
         <v-list>
-          <v-list-item
-            v-for="n in 5"
-            :key="n"
-            @click="() => {}"
-          >
-            <v-list-item-title>Option {{ n }}</v-list-item-title>
-          </v-list-item>
+          <router-link v-for="(menu, k) in menus" :key="k" :to="menu.url">
+            <v-list-item>
+              <v-list-item-title>{{ menu.title }}</v-list-item-title>
+            </v-list-item>
+          </router-link>
         </v-list>
       </v-menu>
+    <v-toolbar-title>在路上</v-toolbar-title>
+    <v-spacer></v-spacer>
   </v-app-bar>
 </template>
 
@@ -35,7 +24,9 @@
       name: "Header",
       data() {
         return {
-
+          menus: [
+            {title: '持续强势', url: '/kline/continued-strong'},
+          ]
         };
       },
       methods: {
