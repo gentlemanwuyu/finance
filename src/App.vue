@@ -1,16 +1,12 @@
 <template>
 <v-app>
-  <v-app-bar app>
-    <Header></Header>
-  </v-app-bar>
+  <Header></Header>
   <v-main>
     <v-container fluid>
       <router-view></router-view>
     </v-container>
   </v-main>
-  <v-footer app>
-    <Footer></Footer>
-  </v-footer>
+  <Footer></Footer>
 </v-app>
 </template>
 
