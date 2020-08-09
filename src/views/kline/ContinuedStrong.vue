@@ -9,25 +9,26 @@
     </v-col>
     <v-col cols="12">
       <v-menu
-        ref="menu"
+        ref="dateMenu"
+        v-model="dateMenu"
         :close-on-content-click="false"
         transition="scale-transition"
         offset-y
+        :return-value.sync="searchParams.start_date"
         min-width="290px"
       >
-        <template v-slot:activator="{ on, attrs }">
+        <template v-slot:activator="{ on }">
           <v-text-field
             label="开始日期"
             readonly
-            v-bind="attrs"
             v-on="on"
             v-model="searchParams.start_date"
           ></v-text-field>
         </template>
-        <v-date-picker no-title scrollable>
+        <v-date-picker no-title scrollable v-model="searchParams.start_date">
           <v-spacer></v-spacer>
-          <v-btn text color="primary" @click="menu = false">Cancel</v-btn>
-          <v-btn text color="primary" @click="$refs.menu.save(date)">OK</v-btn>
+          <v-btn text color="error" @click="dateMenu = false">Cancel</v-btn>
+          <v-btn text color="primary" @click="$refs.dateMenu.save(searchParams.start_date)">OK</v-btn>
         </v-date-picker>
       </v-menu>
     </v-col>
@@ -74,7 +75,8 @@ export default {
       loading: true,
       loadingText: "数据加载中...",
       snackbar: false,
-      snackbarText: ""
+      snackbarText: "",
+      dateMenu: false,
     };
   },
   methods: {
