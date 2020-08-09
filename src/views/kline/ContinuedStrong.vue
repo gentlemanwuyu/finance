@@ -34,7 +34,7 @@
         class="elevation-1"
         disable-sort
         :loading="loading"
-        loading-text="数据加载中..."
+        :loading-text="loadingText"
         :footer-props="{
           'items-per-page-options': [20, 40, 60, 100, -1],
           'items-per-page-text': '每页条数'
@@ -60,6 +60,7 @@ export default {
       ],
       stocks: [],
       loading: true,
+      loadingText: '数据加载中...',
       snackbar: false,
       snackbarText: ""
     };
@@ -67,16 +68,17 @@ export default {
   methods: {
     // 加载数据
     loadData() {
+      let that = this;
       this.$axios.get("/stock/get-continued-strong-list", {
         params: this.searchParams
       }).then(function(res) {
-        this.loading = false;
+        that.loading = false;
         let response = res.data;
         if (0 == response.code) {
-          this.stocks = response.data;
+          that.stocks = response.data;
         } else {
-          this.snackbarText = "数据加载错误";
-          this.snackbar = true;
+          that.snackbarText = "数据加载错误";
+          that.snackbar = true;
         }
       }).catch(function(error) {
         console.log(error);
