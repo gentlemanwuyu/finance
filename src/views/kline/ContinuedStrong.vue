@@ -16,7 +16,13 @@
         min-width="290px"
       >
         <template v-slot:activator="{ on, attrs }">
-          <v-text-field label="开始日期" readonly v-bind="attrs" v-on="on" v-model="searchParams.start_date"></v-text-field>
+          <v-text-field
+            label="开始日期"
+            readonly
+            v-bind="attrs"
+            v-on="on"
+            v-model="searchParams.start_date"
+          ></v-text-field>
         </template>
         <v-date-picker no-title scrollable>
           <v-spacer></v-spacer>
@@ -25,7 +31,9 @@
         </v-date-picker>
       </v-menu>
     </v-col>
-    <v-col cols="12"><v-btn color="primary" @click="loadData();">搜索</v-btn></v-col>
+    <v-col cols="12">
+      <v-btn color="primary" @click="loadData();">搜索</v-btn>
+    </v-col>
     <v-col cols="12">
       <v-data-table
         :headers="headers"
@@ -39,7 +47,11 @@
           'items-per-page-options': [20, 40, 60, 100, -1],
           'items-per-page-text': '每页条数'
         }"
-      ></v-data-table>
+      >
+        <template v-slot:item.name="{ item }">
+          <a :href="`https://xueqiu.com/S/${item.code}`" target="_blank">{{ item.name }}</a>
+        </template>
+      </v-data-table>
     </v-col>
     <v-snackbar v-model="snackbar">{{ snackbarText }}</v-snackbar>
   </v-row>
@@ -60,7 +72,7 @@ export default {
       ],
       stocks: [],
       loading: true,
-      loadingText: '数据加载中...',
+      loadingText: "数据加载中...",
       snackbar: false,
       snackbarText: ""
     };
@@ -69,20 +81,31 @@ export default {
     // 加载数据
     loadData() {
       let that = this;
-      this.$axios.get("/stock/get-continued-strong-list", {
-        params: this.searchParams
-      }).then(function(res) {
-        that.loading = false;
-        let response = res.data;
-        if (0 == response.code) {
-          that.stocks = response.data;
-        } else {
-          that.snackbarText = "数据加载错误";
-          that.snackbar = true;
-        }
-      }).catch(function(error) {
-        console.log(error);
+      this.loading = true;
+      this.stocks = [];
+      this.$axios
+        .get("/stock/get-continued-strong-list", {
+          params: this.searchParams
+        })
+        .then(function(res) {
+          that.loading = false;
+          let response = res.data;
+          if (0 == response.code) {
+            that.stocks = that.processData(response.data);
+          } else {
+            that.snackbarText = "数据加载错误";
+            that.snackbar = true;
+          }
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+    },
+    processData(data) {
+      data.forEach(function (val) {
+        val.code = val.ts_code.split('.').reverse().join('');
       });
+      return data;
     }
   },
   mounted() {
