@@ -1,8 +1,8 @@
 <template>
   <v-row>
     <v-col cols="12">
-      <v-chip class="ma-1" color="red" text-color="white">持续强势</v-chip>
-      <v-chip class="ma-1" color="green" text-color="white">持续弱势</v-chip>
+      <v-chip class="ma-1" :color="strongBtnColor" @click="status = 'strong'; strongBtnColor = 'error'; weakBtnColor = '';">持续强势</v-chip>
+      <v-chip class="ma-1" :color="weakBtnColor" @click="status = 'weak'; strongBtnColor = ''; weakBtnColor = 'primary';">持续弱势</v-chip>
     </v-col>
     <v-col cols="12">
       <v-text-field label="天数" v-model="searchParams.days"></v-text-field>
@@ -77,6 +77,9 @@ export default {
       snackbar: false,
       snackbarText: "",
       dateMenu: false,
+      status: 'strong',
+      strongBtnColor:'error',
+      weakBtnColor:'',
     };
   },
   methods: {
@@ -87,7 +90,7 @@ export default {
       this.stocks = [];
       this.$axios
         .get("/stock/get-continued-strong-list", {
-          params: this.searchParams
+          params: Object.assign({}, this.searchParams, {status: this.status})
         })
         .then(function(res) {
           that.loading = false;
