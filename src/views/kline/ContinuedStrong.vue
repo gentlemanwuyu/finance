@@ -1,11 +1,20 @@
 <template>
   <v-row>
     <v-col cols="12">
-      <v-chip class="ma-1" :color="strongBtnColor" @click="status = 'strong'; strongBtnColor = 'error'; weakBtnColor = '';">持续强势</v-chip>
-      <v-chip class="ma-1" :color="weakBtnColor" @click="status = 'weak'; strongBtnColor = ''; weakBtnColor = 'primary';">持续弱势</v-chip>
+      <v-chip
+        class="ma-1"
+        :color="strongBtnColor"
+        @click="searchParams.status = 'strong'; strongBtnColor = 'error'; weakBtnColor = '';"
+      >持续强势</v-chip>
+      <v-chip
+        class="ma-1"
+        :color="weakBtnColor"
+        @click="searchParams.status = 'weak'; strongBtnColor = ''; weakBtnColor = 'primary';"
+      >持续弱势</v-chip>
     </v-col>
     <v-col cols="12">
-      <v-text-field label="天数" v-model="searchParams.days"></v-text-field>
+      <v-select :items="daysEnum" v-model="searchParams.days" label="天数"></v-select>
+      <!-- <v-text-field label="天数" v-model="searchParams.days"></v-text-field> -->
     </v-col>
     <v-col cols="12">
       <v-menu
@@ -18,12 +27,7 @@
         min-width="290px"
       >
         <template v-slot:activator="{ on }">
-          <v-text-field
-            label="开始日期"
-            readonly
-            v-on="on"
-            v-model="searchParams.start_date"
-          ></v-text-field>
+          <v-text-field label="开始日期" readonly v-on="on" v-model="searchParams.start_date"></v-text-field>
         </template>
         <v-date-picker no-title scrollable v-model="searchParams.start_date">
           <v-spacer></v-spacer>
@@ -65,21 +69,22 @@ export default {
     return {
       searchParams: {
         days: null,
-        start_date: null
+        start_date: null,
+        status: "strong"
       },
       headers: [
         { text: "代码", value: "ts_code" },
         { text: "简写", value: "name" }
       ],
+      daysEnum: [3, 5, 10],
       stocks: [],
       loading: true,
       loadingText: "数据加载中...",
       snackbar: false,
       snackbarText: "",
       dateMenu: false,
-      status: 'strong',
-      strongBtnColor:'error',
-      weakBtnColor:'',
+      strongBtnColor: "error",
+      weakBtnColor: ""
     };
   },
   methods: {
@@ -90,7 +95,7 @@ export default {
       this.stocks = [];
       this.$axios
         .get("/stock/get-continued-strong-list", {
-          params: Object.assign({}, this.searchParams, {status: this.status})
+          params: Object.assign({}, this.searchParams)
         })
         .then(function(res) {
           that.loading = false;
@@ -107,8 +112,11 @@ export default {
         });
     },
     processData(data) {
-      data.forEach(function (val) {
-        val.code = val.ts_code.split('.').reverse().join('');
+      data.forEach(function(val) {
+        val.code = val.ts_code
+          .split(".")
+          .reverse()
+          .join("");
       });
       return data;
     }
